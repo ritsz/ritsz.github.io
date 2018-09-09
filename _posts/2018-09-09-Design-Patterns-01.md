@@ -18,14 +18,13 @@ category:
             return new T;
         }
     };
-
     template<class T>
     struct MallocCreator
     {
         static T* Create()
         {
             void *buf = std::malloc(sizeof(T));
-            /*Placement new operator, uses the provided buffer*/
+            // Placement new operator, uses the provided buffer
             return new(buf) T; 
         }
     };
