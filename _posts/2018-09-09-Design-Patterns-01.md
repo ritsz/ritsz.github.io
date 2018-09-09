@@ -8,27 +8,7 @@ category:
 
 ### Policy classes
 * A policy defines a class interface or a class template interface. For example, say the policy is to create an object.
-* Policy classes are classes that implement this policy
-{% highlight cpp linenos %}
-    template<class T>
-    struct NewCreator
-    {
-        static T* Create()
-        {
-            return new T;
-        }
-    };
-    template<class T>
-    struct MallocCreator
-    {
-        static T* Create()
-        {
-            void *buf = std::malloc(sizeof(T));
-            // Placement new operator, uses the provided buffer
-            return new(buf) T; 
-        }
-    };
-{% endhighlight %}
+* Policy classes are classes that implement this policy.
 * The class that uses the policies is called a host class.
 {% highlight cpp linenos %}
     template<class Policy>
