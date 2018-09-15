@@ -30,19 +30,6 @@ category:
     };
 {% endhighlight %}
 * The class that uses the policies is called a host class.
-{% highlight cpp linenos %}
-    template<class Policy>
-    class Manager : public Policy
-    {
-    } ;
-    typedef Manager< NewCreator<MyClass> > MyClassCreator;
-
-    int main()
-    {
-        MyClassCreator creator;
-        MyClass *obj = creator.Create();
-    }
-{% endhighlight %}
 * The host class derives from the policy class to derive the interface of the policies to be used.
 * By design, host classes allow configuration of functionality by using template derivation.
 * This is similar to Stratergy pattern, except the choice happens in compile time (we decide which policy to use) as opposed to run-time (we decide which stratergy to use on run-time).
