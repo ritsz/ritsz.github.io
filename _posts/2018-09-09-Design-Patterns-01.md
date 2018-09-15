@@ -28,6 +28,11 @@ category:
             return new(buf) T; 
         }
     };
+    template<class Policy>
+    class Manager : public Policy
+    {
+    };
+    typedef Manager<NewCreator<MyClass>> MyClassCreator;
 {% endhighlight %}
 * The class that uses the policies is called a host class.The host class derives from the policy class to derive the interface of the policies to be used.
 * By design, host classes allow configuration of functionality by using template derivation.
