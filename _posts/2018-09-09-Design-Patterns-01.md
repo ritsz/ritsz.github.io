@@ -75,12 +75,12 @@ category:
 * Strategy patterns do via interfaces almost exactly what policy patterns do via inheritance.
 
 {% highlight cpp linenos %}
-    class NewlineInterface
+    class INewlineInterface
     {
         public:
             virtual string LineEnding() = 0;
     };
-    class Windows : public class NewlineInterface
+    class Windows : public class INewlineInterface
     {
         public:
             virtual string LineEnding()
@@ -88,7 +88,7 @@ category:
                 return "\r\n";
             }
     }
-    class Unix : public class NewlineInterface
+    class Unix : public class INewlineInterface
     {
         public:
             virtual string LineEnding()
@@ -98,7 +98,7 @@ category:
     }
     class DocumentProcessor
     {
-        unique_ptr<NewlineInterface> ptrNewLineDelimiter;
+        unique_ptr<INewlineInterface> ptrNewLineDelimiter;
         public:
             DocumentProcessor(OSType input)
             {
@@ -113,18 +113,18 @@ category:
 {% endhighlight %}
 * Another behavior that can be achieved is that `DocumentProcessor` could itself be subclassed and just be an *aggregation of interfaces*, with each subclass using one of the interfaces from the family of algorithms that it chooses to.
 {% highlight cpp linenos %}
-    class DocumentFormatter
+    class IDocumentFormatter
     {
     };
-    class PlainTextFormatter : public class DocumentFormatter
+    class PlainTextFormatter : public class IDocumentFormatter
     {
     };
-    class JSONFormatter : public class DocumentFormatter
+    class JSONFormatter : public class IDocumentFormatter
     {
     };
     class DocumentProcessor
     {
-        unique_ptr<NewlineInterface> ptrNewLineDelimiter;
-        unique_ptr<DocumentFormatter> ptrDocumentFormatter;
+        unique_ptr<INewlineInterface> ptrNewLineDelimiter;
+        unique_ptr<IDocumentFormatter> ptrDocumentFormatter;
     };
 {% endhighlight %}
