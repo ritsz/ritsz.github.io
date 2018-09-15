@@ -110,4 +110,21 @@ category:
                 }
             }
     }
-{% endhighlight %} 
+{% endhighlight %}
+* Another behavior that can be achieved is that `DocumentProcessor` could itself be subclassed and just be an *aggregation of interfaces*, with each subclass using one of the interfaces from the family of algorithms that it chooses to.
+{% highlight cpp linenos %}
+    class DocumentFormatter
+    {
+    };
+    class PlainTextFormatter : public class DocumentFormatter
+    {
+    };
+    class JSONFormatter : public class DocumentFormatter
+    {
+    };
+    class DocumentProcessor
+    {
+        unique_ptr<NewlineInterface> ptrNewLineDelimiter;
+        unique_ptr<DocumentFormatter> ptrDocumentFormatter;
+    };
+{% endhighlight %}
