@@ -9,7 +9,6 @@ category:
 ### Policy classes
 * A policy defines a class interface or a class template interface. For example, say the policy is to create an object.
 * Policy classes are classes that implement this policy.
-{% highlight cpp linenos %}
     template<class T>
     struct NewCreator
     {
@@ -39,7 +38,6 @@ category:
         MyClassCreator creator;
         MyClass *obj = creator.Create();
     }
-{% endhighlight %}
 * The class that uses the policies is called a host class.The host class derives from the policy class to derive the interface of the policies to be used.
 * By design, host classes allow configuration of functionality by using template derivation.
 * This is similar to Stratergy pattern, except the choice happens in compile time (we decide which policy to use) as opposed to run-time (we decide which stratergy to use on run-time).
