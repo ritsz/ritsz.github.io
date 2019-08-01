@@ -1,9 +1,10 @@
 ---
 layout: post
-title: Notes on Design Patterns - 2
+title: Notes on Synchronization and Concurrency
 published: true
 category:
-  - Design Patterns
+  - Operating System
+  - Concurrency
 ---
 
 ### Memory Reordering
