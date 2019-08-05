@@ -52,7 +52,6 @@ category:
 {% endhighlight %}
 * In the above example, without the memory fence, since X, Y, and r1 are indepedent memory areas, compiler can reorganize for `r1 = Y` to happen   before `X = 1`, which could lead to undesired results [IF THE ARE SHARED MEMORY AREAS.]
 * The memory fence gaurantees that memory operations don't cross that boundary. Things above and below it can be reordered among themselves but cannot be reordered in such a way that they cross the memory fence.
-* In C++11 atomic library standard, every non-relaxed atomic operation acts as a compiler barrier as well.
 
 ### Atomic operations.
 * No thread can observe the atomic operation half complete.
