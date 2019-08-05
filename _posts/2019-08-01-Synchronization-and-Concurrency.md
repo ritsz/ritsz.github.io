@@ -63,6 +63,7 @@ category:
         // <-- reordering is prevented here!
         IsPublished.store(1, std::memory_order_release);
     }
+{% endhighlight %}
 
 ### Atomic operations.
 * No thread can observe the atomic operation half complete.
