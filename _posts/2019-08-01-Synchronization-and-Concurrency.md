@@ -50,7 +50,7 @@ category:
     asm volatile("" ::: "memory");
     r1 = Y;
 {% endhighlight %}
-* In the above example, without the memory fence, since X, Y, and r1 are indepedent memory areas, compiler can reorganize for `r1 = Y` to happen   before `X = 1`, which could lead to undesired results [IF THE ARE SHARED MEMORY AREAS.]
+* In the above example, without the memory fence, since X, Y, and r1 are indepedent memory areas, compiler can reorganize for `r1 = Y` to happen  before `X = 1`, which could lead to undesired results [IF THE ARE SHARED MEMORY AREAS.]
 * The memory fence gaurantees that memory operations don't cross that boundary. Things above and below it can be reordered among themselves but cannot be reordered in such a way that they cross the memory fence.
 
 ### Atomic operations.
