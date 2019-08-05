@@ -64,7 +64,6 @@ category:
         IsPublished.store(1, std::memory_order_release);
     }
 {% endhighlight %}
-
 ### Atomic operations.
 * No thread can observe the atomic operation half complete.
 * Aligned reads and writes of simple types are usually atomic.
