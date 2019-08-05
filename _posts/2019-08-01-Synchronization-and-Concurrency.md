@@ -50,17 +50,27 @@ category:
     asm volatile("" ::: "memory");
     r1 = Y;
 {% endhighlight %}
-* In the above example, without the memory fence, since X, Y, and r1 are indepedent memory areas, compiler can reorganize for `r1 = Y` to happen  before `X = 1`, which could lead to undesired results [IF THE ARE SHARED MEMORY AREAS.]
+* In the above example, without the memory fence, since X, Y, and r1 are indepedent memory areas, compiler can reorganize for `r1 = Y` to happen before `X = 1`, which could lead to undesired results [IF THE ARE SHARED MEMORY AREAS.]
 * The memory fence gaurantees that memory operations don't cross that boundary. Things above and below it can be reordered among themselves but cannot be reordered in such a way that they cross the memory fence.
+* In C++11 atomic library standard, every non-relaxed atomic operation acts as a compiler barrier as well.
+{% highlight cpp linenos %}
+    int Value;
+    std::atomic<int> IsPublished(0);
 
+    void sendValue(int x)
+    {
+        Value = x;
+        // <-- reordering is prevented here!
+        IsPublished.store(1, std::memory_order_release);
+    }
+{% endhighlight %}
 ### Atomic operations.
 * No thread can observe the atomic operation half complete.
 * Aligned reads and writes of simple types are usually atomic.
 * C++11 has `std::atomic<T>::fetch_add` to perform atomic read-modify-write.
 
 ### Compare-and-swap
-* Programmers perform compare-and-swap in a loop to repeatedly attempt a transaction. This pattern typically involves copying a shared variable to a local variable, performing some speculative work, and attempting to publish the changes using CAS.
-{% endhighlight %}
+* Programmers perform compare-and-swap in a loop to repeatedly attempt a transaction. This pattern typically involves copying a shared variable to a local variable, performing some speculative work, and attempting to publish the changes using CAS
 
 ### References
 1. [Memory Reordering Caught in the Act](https://preshing.com/20120515/memory-reordering-caught-in-the-act/)
