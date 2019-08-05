@@ -72,6 +72,11 @@ category:
 ### Compare-and-swap
 * Programmers perform compare-and-swap in a loop to repeatedly attempt a transaction. This pattern typically involves copying a shared variable to a local variable, performing some speculative work, and attempting to publish the changes using CAS
 
+### Aquire and Release semantics
+* Acquire semantics is a property that can only apply to operations that read from shared memory, whether they are read-modify-write operations or plain loads. The operation is then considered a read-acquire. *Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.*
+* Release semantics is a property that can only apply to operations that write to shared memory, whether they are read-modify-write operations or plain stores. The operation is then considered a write-release. *Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.*
+
+
 ### References
 1. [Memory Reordering Caught in the Act](https://preshing.com/20120515/memory-reordering-caught-in-the-act/)
 2. [Memory barrier - Kernel documentation](https://www.kernel.org/doc/Documentation/memory-barriers.txt)
