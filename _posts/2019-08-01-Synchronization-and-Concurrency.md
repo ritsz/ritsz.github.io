@@ -75,6 +75,28 @@ category:
 ### Aquire and Release semantics
 * Acquire semantics is a property that can only apply to operations that read from shared memory, whether they are read-modify-write operations or plain loads. The operation is then considered a read-acquire. *Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.*
 * Release semantics is a property that can only apply to operations that write to shared memory, whether they are read-modify-write operations or plain stores. The operation is then considered a write-release. *Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.*
+* Acquire semantics will use LoadLoad and LoadStore memory barriers.
+* Release semantics will use LoadStore and StoreStore memory barriers.
+* Acquire and Release semantics can be used to perform lock free programming by passing message around threads that are working cooperatively.
+{% highlight cpp linenos %}
+    int Payload = 0
+    std::atomic<int> Signal = 0;
+    // Thread 1 produces data and sets the signal.
+    // The signal cannot be reordered with data produced
+    // else the other thread will receive bad data
+    payload = 42;
+    Signal.store(1, memory_order_release);
+
+    // Thread 2 checks the signal and if the signal is set,
+    // consumes the data from the shared payload. Checking the
+    // signal cannot be reordered with using the payload
+    int sig = Signal.load(memory_order_acquire);
+    if ( sig )
+        Use_data(payload); 
+{% endhighlight %}
+* The 2 acquire and release calls help the threads synchronize with each other.
+* Acquire semantic is analogous to acquiring a lock. Operation after it cannot be reordered to be before it.
+* Release semantic is analogous to releasing a lock. Operations before it cannot be reordered to be after it.
 
 
 ### References
