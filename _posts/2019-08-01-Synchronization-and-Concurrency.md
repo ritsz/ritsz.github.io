@@ -54,17 +54,6 @@ category:
 * The memory fence gaurantees that memory operations don't cross that boundary. Things above and below it can be reordered among themselves but cannot be reordered in such a way that they cross the memory fence.
 * In C++11 atomic library standard, every non-relaxed atomic operation acts as a compiler barrier as well.
 
-{% highlight cpp linenos %}
-    int Value;
-    std::atomic<int> IsPublished(0);
-    void sendValue(int x)
-    {
-        Value = x;
-        // <-- reordering is prevented here!
-        IsPublished.store(1, std::memory_order_release);
-    }
-{% endhighlight %}
-
 ### Atomic operations.
 * No thread can observe the atomic operation half complete.
 * Aligned reads and writes of simple types are usually atomic.
