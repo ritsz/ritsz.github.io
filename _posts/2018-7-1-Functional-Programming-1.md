@@ -8,7 +8,7 @@ category:
 ---
 
 * A function can only read what is supplied to it in its arguments and the only way it can have an effect on the world is through the values it returns.
-* 
+
 ### Monad
 * A monad is created by defining a type constructor `M` and two operations, `bind` and `return` (where `return` is often also called `unit`):
 1. The unary `return` operation takes a value from a plain type `a` and puts it into a container using the constructor, creating monadic value with type `M a`
