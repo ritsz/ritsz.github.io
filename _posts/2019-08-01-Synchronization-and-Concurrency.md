@@ -5,6 +5,7 @@ published: true
 category:
   - Operating System
   - Concurrency
+  - Consistency
 ---
 
 ### Memory Reordering
@@ -13,6 +14,9 @@ category:
 * Hence memory reordering is not observed by the end user in single threaded programs, and multi threaded programs using synchronization primitives.
 * Memory reordering is observed only in case of a lock free program with shared memories.
 * Java's `volatile` and C++'s `atomic` provided sequentially consistent data types (On the same CPU, Load and store on these data types happen in the order they are expressed in the program.)
+* Important to understand what sequential consistency is: `the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program.` - Leslie Lamport
+* What the above statement means is, that, for each thread, operations need to happen in program order. A thread `T1` with operations `A1`, `B1` and `C1` will have to execute these operations in that sequence. Across multiple processors, the sequence is undefined. Thread `T2` with operations `A2` and `B2`, can be scheduled in anyway with respect to thread `T1` as long as `A2` and `B2` maintain their mutual order between themselves. `Sequential consistency gaurantees Program Order.`
+![useful image]({{ site.url }}/images/Sequential-Consistency.PNG)
 
 ### Processor Reordering
 * A processor is allowed to reorder instruction (memory interations), as long it never changes the execution of a single-threaded program.
