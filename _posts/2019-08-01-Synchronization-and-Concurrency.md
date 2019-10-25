@@ -16,7 +16,8 @@ category:
 * Java's `volatile` and C++'s `atomic` provided sequentially consistent data types (On the same CPU, Load and store on these data types happen in the order they are expressed in the program.)
 * Important to understand what sequential consistency is: `the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program.` - Leslie Lamport
 * What the above statement means is, that, for each thread, operations need to happen in program order. A thread `T1` with operations `A1`, `B1` and `C1` will have to execute these operations in that sequence. Across multiple processors, the sequence is undefined. Thread `T2` with operations `A2` and `B2`, can be scheduled in anyway with respect to thread `T1` as long as `A2` and `B2` maintain their mutual order between themselves. `Sequential consistency gaurantees Program Order.`
-![useful image]({{ site.url }}/images/Sequential-Consistency.PNG)
+* In the image below, write from P1 and P2 may be scheduled in any order amongst themselves, but once an ordering has been decided, P3 and P4 should see them in the same order.
+![Sequential consistency]({{ site.url }}/images/Sequential-Consistency.PNG)
 
 ### Processor Reordering
 * A processor is allowed to reorder instruction (memory interations), as long it never changes the execution of a single-threaded program.
@@ -101,8 +102,12 @@ category:
 * The 2 acquire and release calls help the threads synchronize with each other.
 * Acquire semantic is analogous to acquiring a lock. Operation after it cannot be reordered to be before it.
 * Release semantic is analogous to releasing a lock. Operations before it cannot be reordered to be after it.
+![Synchronization-with]({{ site.url }}/images/Synchronization-With.jpg)
 
 
 ### References
 1. [Memory Reordering Caught in the Act](https://preshing.com/20120515/memory-reordering-caught-in-the-act/)
 2. [Memory barrier - Kernel documentation](https://www.kernel.org/doc/Documentation/memory-barriers.txt)
+3. [Sequential Consistency](https://en.wikipedia.org/wiki/Sequential_consistency)
+4. [University of Helsinki - Distributed Systems: Replication and Consistency](https://www.cs.helsinki.fi/webfm_send/1256)
+5. [What volatile means in Java](http://jeremymanson.blogspot.com/2008/11/what-volatile-means-in-java.html)
