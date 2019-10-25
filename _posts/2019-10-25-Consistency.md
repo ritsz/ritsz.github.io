@@ -35,13 +35,21 @@ category:
 * There are four different session guarantees that are ensured and guaranteed by the causal consistency model. Those guarantees are summarized below:
     
 ##### Read Your Writes  
-This means that preceding write operations are indicated and reflected by the following read operations.
+* This means that preceding write operations are indicated and reflected by the following read operations. 
+* The Read Your Writes guarantee ensures that whenever a client reads a value after updating it, it sees that value
+![Read Your Writes]({{ site.url }}/images/Read-Your-Writes.PNG)
 
 ##### Monotonic Reads
-* this implies that an up-to-date increasing set of write operations is guaranteed to be indicated by later read operations.
+* This implies that an up-to-date increasing set of write operations is guaranteed to be indicated by later read operations.
+* A non-monotonic read anomaly occurs within a session when a read of some object returns a given version, and a subsequent read of the same object returns an earlier version.
+![Monotonic Reads]({{ site.url }}/images/Monotonic-Read.PNG)
 
 ##### Writes Follow Reads
 * This provides an assurance that write operations follow and come after reads by which they are influenced.
+* A non-monotonic transaction anomaly occurs if a session observes the effect of transaction T1 and then commits T2, and another session sees the effects of T2 but not T1. The Writes Follow Reads guarantee prevents these anomalies.
+![Writes-Follow-Reads]({{ site.url }}/images/Writes-Follow-Reads.PNG)
 
 ##### Monotonic Writes
 * This guarantees that write operations must go after other writes that reasonably should precede them.
+* A non-monotonic write anomaly occurs if a session’s writes become visible out of order.
+![Monotonic Writes]({{ site.url }}/images/Monotonic-Write.PNG)
