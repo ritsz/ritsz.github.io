@@ -9,7 +9,7 @@ category:
 ### Single Responsibility Principle
 * A class should be responsible for only one thing.
 * Very precise names for small classes is better than generic names for large classes.
-* _A class should have one and only one reason to change_
+* A class should have one and only one reason to change. 
 {% highlight cpp linenos %}
     class Rectangle
     {
