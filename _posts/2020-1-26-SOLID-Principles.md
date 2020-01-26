@@ -10,15 +10,6 @@ category:
 * A class should be responsible for only one thing.
 * Very precise names for small classes is better than generic names for large classes.
 * A class should have one and only one reason to change. 
-{% highlight cpp linenos %}
-    class Rectangle
-    {
-        int length, breadth;
-    public:
-        long area();
-        void Draw();
-    };
-{% endhighlight %}
 * The above class has two responsibilities, calculate the area and draw the graphical representation of the rectangle in the GUI. This violates Single Responsibility. Refactor different responsibilities to different classes.
 {% highlight cpp linenos %}
     class Rectangle
