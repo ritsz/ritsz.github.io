@@ -39,34 +39,34 @@ category:
 * Software entities (classes, modules, functions) should be open to extension but closed for modification.
 * This is achieved using inheritence and interfaces that enable classes to polymorphically substitute for each other.
 {% highlight cpp linenos %}
-class Payment
-{
-public:
-    virtual void pay() = 0;
-};
-
-class BankingPayment : public Payment
-{
-public:
-    virtual void pay(); /* Bank payment logic */
-};
-
-class GooglePayment : public Payment
-{
-public:
-    virtual void pay(); /* GooglePay logic */
-};
-
-class PaymentFactory
-{
-    static Payment* GetPaymentMethod(string requestType)
+    class Payment
     {
-        if (requestType == "gpay")
-            return new GooglePayment();
-        else
-            return new BankingPayment(); 
-    }
-};
+    public:
+        virtual void pay() = 0;
+    };
+
+    class BankingPayment : public Payment
+    {
+    public:
+        virtual void pay(); /* Bank payment logic */
+    };
+
+    class GooglePayment : public Payment
+    {
+    public:
+        virtual void pay(); /* GooglePay logic */
+    };
+
+    class PaymentFactory
+    {
+        static Payment* GetPaymentMethod(string requestType)
+        {
+            if (requestType == "gpay")
+                return new GooglePayment();
+            else
+                return new BankingPayment(); 
+        }
+    };
 {% endhighlight %}
 
 ### Liskov Substitution Principle
