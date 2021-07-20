@@ -28,14 +28,15 @@ modified: '2021-05-08T16:25:24.145Z'
     to your terminal.
 * When docker is installed on MacOS/Windows, the Docker Server is run as a Linux Virtual Machine.
 
-#### Building an image	
+#### Building an image
+* Sample dockerfile
 ```
 Dockerfile
 	FROM node:12-slim
 	COPY server.js server.js
 	CMD ["node", "server.js"]
 ```
-* Each step  `FROM`, `COPY`, `CMD` creates an image that is consumed by the subsequent step. A Nodejs Image is created, a temporary container is created where a file is copied. This new container is used to generate a snapshot (image-2). This image-2 is then used to create a final image which has the Startup command set as `CMD`.
+* Each step  `FROM`, `COPY`, `CMD` creates an image that is consumed by the subsequent step. A `NodeJS` Image is created, a temporary container is created where a file is copied. This new container is used to generate a snapshot (image-2). This image-2 is then used to create a final image which has the Startup command set as `CMD`.
 * Javascript code
 ```js
 server.js
@@ -49,17 +50,19 @@ server.js
 	http.createServer(app).listen(3000);
 	console.log("server started");
 ```
+* Building the image
 ```sh
 docker build -t rritesh-node-img .
 ```
-* Downloads node baseimage from Docker-Hub and creates the template image, by Copying the `server.js`. Doesn't run the `CMD`. Tags the images as `rritesh-node-img`
+* Downloads node baseimage from Docker-Hub and creates the template image, by Copying the `server.js`. Doesn't run the `CMD`. 
+* Tags the images as `rritesh-node-img`
 ```sh
-$ docker image ls
+docker image ls
 REPOSITORY         TAG       IMAGE ID       CREATED         SIZE
 rritesh-node-img   latest    bc63aa5603f8   7 minutes ago   142MB
 hello-world        latest    bf756fb1ae65   13 months ago   13.3kB
 
-$ docker create --name my-app --init -p 3000:3000 rritesh-node-img 			
+docker create --name my-app --init -p 3000:3000 rritesh-node-img 			
 	703e2532312a6ace890b97e2bdcd88c03f19435b5f952015c373831df72dd0ae
 ```
 * `-p` does port mapping between localhost and docker container.
@@ -67,18 +70,18 @@ $ docker create --name my-app --init -p 3000:3000 rritesh-node-img
 
 #### Playing around with docker
 ```sh
-$ docker ps -a
+docker ps -a
 CONTAINER ID   IMAGE              COMMAND                  CREATED          STATUS                      PORTS     NAMES
 703e2532312a   rritesh-node-img   "docker-entrypoint.s…"   24 seconds ago   Created                               my-app
 
-$ docker start my-app
+docker start my-app
 my-app
 
-$ docker ps -a
+docker ps -a
 CONTAINER ID   IMAGE              COMMAND                  CREATED             STATUS                         PORTS                    NAMES
 703e2532312a   rritesh-node-img   "docker-entrypoint.s…"   2 minutes ago       Up 5 seconds                   0.0.0.0:3000->3000/tcp  my-app
 
-$ docker attach my-app			# Attaches to the docker container and prints the logs; Ctrl-C to exit, which also stops the app
+docker attach my-app			# Attaches to the docker container and prints the logs; Ctrl-C to exit, which also stops the app
 ping!
 ping!
 ping!
@@ -86,7 +89,7 @@ ping!
 * `attach` command attaches to the primary process of the container, PID 1.
 * If you run `attach`, your terminal is going to get stuck displaying the container logs. Worse, if you `attach` and then `ctrl-C` to get out, it will actually stop the container on exit. Or worse, it will just ignore the ctrl-C and trap your terminal. If that ever happens to you, you’ll have to open a new terminal and stop the container. That’s why in your applications you should handle the `SIGTERM` or use the Tini package like we have in our example. A better way to see output is the Docker logs command:
 ```sh
-$ docker logs -f my-app
+docker logs -f my-app
 server started
 ping!
 ping!
@@ -94,7 +97,7 @@ ping!
 ```
 * Run a bash shell on the container, notice that the server.js file is copied on the root mount point
 ```sh
-$ docker exec -it my-app bash
+docker exec -it my-app bash
 root@703e2532312a:/# ls 			# <= root@<docker ID>
 bin  boot  dev	etc  home  lib	lib64  media  mnt  opt	proc  root  run  sbin  server.js  srv  sys  tmp  usr  var
 ```
@@ -103,25 +106,25 @@ bin  boot  dev	etc  home  lib	lib64  media  mnt  opt	proc  root  run  sbin  serv
 $docker stop my-app
 my-app
 
-$ docker ps -a
+docker ps -a
 CONTAINER ID   IMAGE              COMMAND                  CREATED             STATUS                         PORTS     NAMES
 703e2532312a   rritesh-node-img   "docker-entrypoint.s…"   13 minutes ago      Exited (143) 3 seconds ago               my-app
 ```
 * `docker kill` can be used to send SIGKILL. If docker stop is not handled by container in 10 sec, a docker kill is sent to it.
 * Remove container
 ```sh	
-$ docker rm my-app
+docker rm my-app
 	my-app
 	
-$ docker ps -a
+docker ps -a
 	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 * `run` is a shortcut that takes care of create, start, and attach all at once. `--rm` flag removes the container when we stop it (stop+rm).
 ```sh
-$ docker run -d --name my-app -p 3000:3000 --init --rm rritesh-node-img
+docker run -d --name my-app -p 3000:3000 --init --rm rritesh-node-img
 	700e9387cbca4e7d95f456136bd0046566471bc2130d48cdfe34241ea7ded05c
 	
-$ docker ps -a
+docker ps -a
 	CONTAINER ID   IMAGE              COMMAND                  CREATED         STATUS         PORTS                    NAMES
 	700e9387cbca   rritesh-node-img   "docker-entrypoint.s…"   4 seconds ago   Up 3 seconds   0.0.0.0:3000->3000/tcp   my-app
 ```
@@ -129,12 +132,12 @@ $ docker ps -a
 * `-i` => interactive: The STDOUT of terminal is piped to the STDIN of the running container, and vice versa
 * `-t` => psuedo-tty: Give a psuedo terminal to interact with.
 ```sh
-[rritesh-a02:rritesh:~] $ docker exec -i fd0c9599579f redis-cli (# Notice no psuedo terminal)
+[rritesh-a02:rritesh:~] docker exec -i fd0c9599579f redis-cli (# Notice no psuedo terminal)
 	set mynumber "5"
 	OK
 	^C
 
-[rritesh-a02:rritesh:~] $ docker exec -it fd0c9599579f redis-cli
+[rritesh-a02:rritesh:~] docker exec -it fd0c9599579f redis-cli
 	127.0.0.1:6379> get mynumber
 	"5"
 ```
