@@ -20,7 +20,7 @@ modified: '2021-05-16T08:59:25.992Z'
 * A User gives one service limited access to a resource served by another service. This is called delecated access.
 * Each service trusts the user, but doesn't trust one another.
 * The App (budget-planner) will be given a key (token) that gives them access to very specific resources on another service (eg. transaction history).
-* The *User* authorizes one *application* to access specific resources from an *API* without giving the User's password to the application. (eg when facebook wants to be authorized to access your contact list.)
+* The **User** authorizes one **application** to access specific resources from an **API** without giving the User's password to the application. (eg when facebook wants to be authorized to access your contact list.)
 
 #### Terminologies
 * **Resource Owner** The user that grants access to the client to access it's resources. (eg r.ranjan789)
@@ -59,7 +59,6 @@ https://cloud.digitalocean.com/v1/oauth/authorize?response_type=code&client_id=C
 * `scope=read`: specifies the level of access that the application is requesting
 * `response_type=code`: specifies that your application is requesting an authorization code grant.
 * The user will be prompted by the service to authorize or deny the application access to their account.
-
 * If the user clicks “Authorize Application”, the service redirects the user-agent to the application redirect URI, which was specified during the client registration, along with an authorization code.
 ```
 https://dropletbook.com/callback?code=AUTHORIZATION_CODE
@@ -95,7 +94,7 @@ https://cloud.digitalocean.com/v1/oauth/token?client_id=CLIENT_ID&client_secret=
 * Also has information about the client that has logged in (*Identity*). Also called an **identity provider**.
 * One login can be used across multiple applications. (*SSO*) 
 * Sits on top of the OAuth 2.0 protocol.
-* It enables client (Spotify) to verify the identity of the Resource Owner (r.ranjan789) based on the authentication performed by the Authorization Server (google.com auth server).
+* It enables client (Spotify) to verify the identity of the Resource Owner (`riteranj@foobar.com`) based on the authentication performed by the Authorization Server (google.com auth server).
 * The resource owner has already authenticated itself with the **Authorization Server**.
 * One of the resources a resource owner owns is their own identity.
 * When the client tries to authorize itself, it sets the scope parameter as `OPENID`. This scope means the authorization server has to authenticate the resource owner as well as authorize the client.
@@ -108,7 +107,7 @@ https://cloud.digitalocean.com/v1/oauth/token?client_id=CLIENT_ID&client_secret=
 * ID Token are encoded as a JSON web token(**JWT**). 
 * The client is also called the Relying Party (**RP**).
 * The resource server has the userinfo endpoint.
-* The UserInfo endpoint is an OAuth 2.0 protected resource, which means that the credential required to access the endpoint is the access token.
+* The **UserInfo endpoint** is an OAuth 2.0 protected resource, which means that the credential required to access the endpoint is the access token.
 * After the client has received the Auth Token and ID Token, if the client application needs more information about the user, it connects to the userinfo endpoint.
 * To obtain the claims for a user, a client makes a request to the UserInfo endpoint by using an access token as the credential. The access token must be one that was obtained through OpenID Connect authentication. The claims for the user who is represented by the access token are returned as a JSON object that contains a collection of name-value pairs for the claims.
 ```
@@ -149,7 +148,7 @@ content = si.RetrieveContent()
 sessionMgr = content.GetSessionManager()
 sessionMgr.LoginByToken()
 ```
-* The SAML Token has been signed by the identity provider (*vmware ssoserversign*):
+* The SAML Token has been signed by the identity provider (**vmware ssoserversign**):
 ```sh  
   Signature Algorithm: sha256WithRSAEncryption
       Issuer: CN=CA, DC=vsphere, DC=local, C=US, ST=California, O=wdc-10-191-178-31.nimbus.eng.vmware.com, OU=VMware Engineering
@@ -172,9 +171,7 @@ sessionMgr.LoginByToken()
             Authority Information Access:
               CA Issuers - URI:https://wdc-10-191-178-31.nimbus.eng.vmware.com/afd/vecs/ca
 ```
-
 * Note that the issuer of the certificates is the VECS on the VCSA.
-
 * JWT Token for the SVC APIServer for sso user Administrator@vsphere.local
 ```json
 	{
@@ -213,11 +210,13 @@ sessionMgr.LoginByToken()
 	    - '--oidc-username-prefix=sso:'
 ```
 * Note that oidc client id is the JWT audience id, and oidc issuer url matches the issuer of the token.
-* `oidc-issue-url` point to the `.well-known/openid-configuration` : `https://wdc-10-191-178-31.nimbus.eng.vmware.com/openidconnect/vsphere.local/.well-known/openid-configuration` is called the *OIDC discovery endpoint*.
+* `oidc-issue-url` point to the `.well-known/openid-configuration` : `https://wdc-10-191-178-31.nimbus.eng.vmware.com/openidconnect/vsphere.local/.well-known/openid-configuration` is called the **OIDC discovery endpoint**.
 * APIServer needs the public key of the issuer to validate the signature on tokens. The oidc-issuer-url is the URL that APIServer uses to get the public keys of the issuer. `https://wdc-10-191-178-31.nimbus.eng.vmware.com/openidconnect/jwks/vsphere.local`
-* *JWKS* - Json web key store is the uri where the public keys of the issuer are stored.
-* How to exchange SAML Token to JWT:
+* **JWKS** - Json web key store is the uri where the public keys of the issuer are stored.
+
+#### How to exchange SAML Token to JWT
 ```sh
+
 export SAMLT=$(python get_saml_token.py) #BASE-64 ENCODED SAML TOKEN OF THE USER
 
 dcli com vmware vcenter tokenservice tokenexchange exchange          \
@@ -226,7 +225,23 @@ dcli com vmware vcenter tokenservice tokenexchange exchange          \
   --requested-token-type "urn:ietf:params:oauth:token-type:id_token" \
   --audience "vmware-tes:vc:vns:k8s"                                 \
   --subject-token $SAMLT
-access_token: eyJraWQiOiJDRkZBNUZDREUwNzI2MDNEMDBBRjYxNzU2MUQ1QUUxNUQxMzU0MEE1IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJBZG1pbmlzdHJhdG9yQHZzcGhlcmUubG9jYWwiLCJhdWQiOiJ2bXdhcmUtdGVzOnZjOnZuczprOHMiLCJkb21haW4iOiJ2c3BoZXJlLmxvY2FsIiwiaXNzIjoiaHR0cHM6XC9cL3dkYy0xMC0xOTEtMTc4LTMxLm5pbWJ1cy5lbmcudm13YXJlLmNvbVwvb3BlbmlkY29ubmVjdFwvdnNwaGVyZS5sb2NhbCIsImdyb3VwX25hbWVzIjpbIkxpY2Vuc2VTZXJ2aWNlLkFkbWluaXN0cmF0b3JzQHZzcGhlcmUubG9jYWwiLCJTeXN0ZW1Db25maWd1cmF0aW9uLlJlYWRPbmx5QHZzcGhlcmUubG9jYWwiLCJTeXN0ZW1Db25maWd1cmF0aW9uLlN1cHBvcnRVc2Vyc0B2c3BoZXJlLmxvY2FsIiwiQWRtaW5pc3RyYXRvcnNAdnNwaGVyZS5sb2NhbCIsIkV2ZXJ5b25lQHZzcGhlcmUubG9jYWwiLCJDQUFkbWluc0B2c3BoZXJlLmxvY2FsIiwiU3lzdGVtQ29uZmlndXJhdGlvbi5BZG1pbmlzdHJhdG9yc0B2c3BoZXJlLmxvY2FsIiwiU3lzdGVtQ29uZmlndXJhdGlvbi5CYXNoU2hlbGxBZG1pbmlzdHJhdG9yc0B2c3BoZXJlLmxvY2FsIiwiVXNlcnNAdnNwaGVyZS5sb2NhbCJdLCJleHAiOjE2MjAwMDIyMDIsImlhdCI6MTYxOTk2NjIwMiwianRpIjoiMzFiNzVlMTMtYThlNS00OGEyLThiNjEtNDBkZjk3M2UyZWM3IiwidXNlcm5hbWUiOiJBZG1pbmlzdHJhdG9yIn0.OaT35A5E2oHeiD8rhoEZkc6obwdKdwoAlZ3dLvgVHlmU6wNEeiGA8Ehp5DhnqrPJIgJpz8EeNKFL6ybmDzVaMWjSHFo8xXA7cMJvcEabtQr26cKqv85gSYyoSvIB7q1nVuu86CLND9k5p7s1KrwdWcOPxYeYnTdKQOnIf75faRctjLiISVI7IRIcmFRKba2U3vVKilwuCLvSl6Prj4ueph6yTWDVTyxFQBXWPi2bwBRjHFmjJwaw-Q8WVChEHmF6rFuzkRmc7cOGHHFLnG22qXTdYOjGquNAEikcth0c_UMWtQVluUyedWML5vV2GeXj7QB36tbyvH9shTbbgfYFtA
+access_token: eyJraWQiOiJDRkZBNUZDREUwNzI2MDNEMDBBRjYxNzU2MUQ1QUUxNUQxMzU0MEE1Ii
+wiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJBZG1pbmlzdHJhdG9yQHZzcGhlcmUubG9jYWwiLCJhdWQiOiJ
+2bXdhcmUtdGVzOnZjOnZuczprOHMiLCJkb21haW4iOiJ2c3BoZXJlLmxvY2FsIiwiaXNzIjoiaHR0cHM
+6XC9cL3dkYy0xMC0xOTEtMTc4LTMxLm5pbWJ1cy5lbmcudm13YXJlLmNvbVwvb3BlbmlkY29ubmVjdFw
+vdnNwaGVyZS5sb2NhbCIsImdyb3VwX25hbWVzIjpbIkxpY2Vuc2VTZXJ2aWNlLkFkbWluaXN0cmF0b3J
+zQHZzcGhlcmUubG9jYWwiLCJTeXN0ZW1Db25maWd1cmF0aW9uLlJlYWRPbmx5QHZzcGhlcmUubG9jYWw
+iLCJTeXN0ZW1Db25maWd1cmF0aW9uLlN1cHBvcnRVc2Vyc0B2c3BoZXJlLmxvY2FsIiwiQWRtaW5pc3R
+yYXRvcnNAdnNwaGVyZS5sb2NhbCIsIkV2ZXJ5b25lQHZzcGhlcmUubG9jYWwiLCJDQUFkbWluc0B2c3B
+oZXJlLmxvY2FsIiwiU3lzdGVtQ29uZmlndXJhdGlvbi5BZG1pbmlzdHJhdG9yc0B2c3BoZXJlLmxvY2F
+sIiwiU3lzdGVtQ29uZmlndXJhdGlvbi5CYXNoU2hlbGxBZG1pbmlzdHJhdG9yc0B2c3BoZXJlLmxvY2F
+sIiwiVXNlcnNAdnNwaGVyZS5sb2NhbCJdLCJleHAiOjE2MjAwMDIyMDIsImlhdCI6MTYxOTk2NjIwMiw
+ianRpIjoiMzFiNzVlMTMtYThlNS00OGEyLThiNjEtNDBkZjk3M2UyZWM3IiwidXNlcm5hbWUiOiJBZG1
+pbmlzdHJhdG9yIn0.OaT35A5E2oHeiD8rhoEZkc6obwdKdwoAlZ3dLvgVHlmU6wNEeiGA8Ehp5DhnqrP
+JIgJpz8EeNKFL6ybmDzVaMWjSHFo8xXA7cMJvcEabtQr26cKqv85gSYyoSvIB7q1nVuu86CLND9k5p7s
+1KrwdWcOPxYeYnTdKQOnIf75faRctjLiISVI7IRIcmFRKba2U3vVKilwuCLvSl6Prj4ueph6yTWDVTyx
+FQBXWPi2bwBRjHFmjJwaw-Q8WVChEHmF6rFuzkRmc7cOGHHFLnG22qXTdYOjGquNAEikcth0c_UMWtQV
+luUyedWML5vV2GeXj7QB36tbyvH9shTbbgfYFtA
 refresh_token:
 issued_token_type: urn:ietf:params:oauth:token-type:id_token
 scope: openid
