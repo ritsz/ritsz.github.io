@@ -48,10 +48,11 @@ $ kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
 ```
 $ openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 -print_certs -text -noout
 ```
+
+#### Generating certificates
 * Generating self signed certificates
 ```
-Generate private key
-$ openssl genrsa -des3 -out server/server.key 1024
+$ openssl genrsa -des3 -out server/server.key 1024 # Generate private key
 
 Generate self signed certificate.
 $ openssl req -new -key server/server.key -x509 -days 365 -out server/server.crt
@@ -176,6 +177,8 @@ $ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
 	         dc:29:27:d2:ba:9e:38:c5:01:f9:8b:0b:04:2a:b6:8d:a2:0c:
 	         42:fe
 ```
+
+### VMware certificates
 * Get the VMCA root certificate
 ```
 root@wdc-10-191-178-31 [ ~ ]# dcli +show com vmware vcenter certificateauthority getroot getroot
