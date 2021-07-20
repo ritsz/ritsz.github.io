@@ -70,3 +70,27 @@ kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
 openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 \
 -print_certs -text -noout
 ```
+
+#### Generating certificates
+* Generating self signed certificates
+```sh
+openssl genrsa -des3 -out server/server.key 1024 # Generate private key
+
+Generate self signed certificate.
+openssl req -new -key server/server.key -x509 -days 365 -out server/server.crt
+
+Checking the self signed certificate:
+openssl x509 -inform pem -noout -text -in server/server.crt
+	Certificate:
+	    Data:
+	        Version: 1 (0x0)
+	        Serial Number: 15988035885256798120 (0xdde0e9edecedefa8)
+	    Signature Algorithm: sha256WithRSAEncryption
+	        Issuer: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Validity
+	            Not Before: Jul 20 14:33:27 2021 GMT
+	            Not After : Jul 20 14:33:27 2022 GMT
+	        Subject: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
+```
