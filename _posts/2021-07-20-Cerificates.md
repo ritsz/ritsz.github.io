@@ -1,5 +1,3 @@
-# Notes on Certificates
-
 ### Reference
 
 * https://kubernetes.io/docs/reference/access-authn-authz/authentication/

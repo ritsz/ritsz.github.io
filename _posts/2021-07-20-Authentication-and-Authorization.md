@@ -1,11 +1,3 @@
----
-title: Authentication and Authorization
-created: '2021-03-09T14:16:13.169Z'
-modified: '2021-05-16T08:59:25.992Z'
----
-
-# Authentication and Authorization
-
 ### Reference
 
 * [Introduction to OAuth](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)
