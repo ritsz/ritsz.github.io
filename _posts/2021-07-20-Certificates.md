@@ -49,28 +49,6 @@
 * Client sends *CypherChangeSpec* (we are moving to symmetric encryption now.)
 * Server confirms *CypherChangeSpec*.
 
-#### curl and openssl commands.
-* Command to verify ssl connection:	
-```sh
-openssl s_client -connect <ip>:<port>
-```
-* Command to decode the pem-encoded certificate:
-```sh
-openssl x509 -inform pem -noout -text -in <file>
-```
-* Command to get the certificate information of a service account in kubernetes.
-```sh
-kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
-	   jq -r '.data."ca.crt"' | \
-	   base64 -d | \
-	   openssl x509 -inform pem -noout -text
-```
-* Validating a certificate chain
-```sh
-openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 \
--print_certs -text -noout
-```
-
 #### Generating certificates
 * Generating self signed certificates
 ```sh
@@ -93,4 +71,26 @@ openssl x509 -inform pem -noout -text -in server/server.crt
 	        Subject: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
 	        Subject Public Key Info:
 	            Public Key Algorithm: rsaEncryption
+```
+
+#### curl and openssl commands.
+* Command to verify ssl connection:	
+```sh
+openssl s_client -connect <ip>:<port>
+```
+* Command to decode the pem-encoded certificate:
+```sh
+openssl x509 -inform pem -noout -text -in <file>
+```
+* Command to get the certificate information of a service account in kubernetes.
+```sh
+kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
+	   jq -r '.data."ca.crt"' | \
+	   base64 -d | \
+	   openssl x509 -inform pem -noout -text
+```
+* Validating a certificate chain
+```sh
+openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 \
+-print_certs -text -noout
 ```
