@@ -29,25 +29,134 @@
 * A root CA is a public Certificate Authority that is widely trusted. Information for several root CAs is typically stored in the client's Internet browser. This information includes the CA's public key. Well-known CAs include DigiCert, Entrust, and GlobalSign.
 
 ### curl and openssl commands.
-* Command to verify ssl connection:	
+
+#### Generating certificates
+* Generating self signed certificates
 ```
-$ openssl s_client -connect <ip>:<port>
+$ openssl genrsa -des3 -out server/server.key 1024 # Generate private key
+
+Generate self signed certificate.
+$ openssl req -new -key server/server.key -x509 -days 365 -out server/server.crt
+
+Checking the self signed certificate:
+$ openssl x509 -inform pem -noout -text -in server/server.crt
+	Certificate:
+	    Data:
+	        Version: 1 (0x0)
+	        Serial Number: 15988035885256798120 (0xdde0e9edecedefa8)
+	    Signature Algorithm: sha256WithRSAEncryption
+	        Issuer: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Validity
+	            Not Before: Jul 20 14:33:27 2021 GMT
+	            Not After : Jul 20 14:33:27 2022 GMT
+	        Subject: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
 ```
-* Command to decode the pem-encoded certificate:
+* Signing a CSR
 ```
-$ openssl x509 -inform pem -noout -text -in <file>
+Generate new key and new CSR
+$ openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
+
+Check the CSR
+$ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
+	verify OK
+	Certificate Request:
+	    Data:
+	        Version: 0 (0x0)
+	        Subject: C=IN, ST=KN, L=Bengalore, O=leaf-ca.net, OU=OU, CN=leaf-ca.net/emailAddress=nobody@leaf-ca.net
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
+	                Public-Key: (1024 bit)
+	                Modulus:
+	                    00:d7:69:e7:ea:78:91:bb:6a:39:f9:db:ec:61:fc:
+	                    46:2a:fa:1c:25:79:45:8d:1e:c2:50:c2:1a:40:92:
+	                    4b:c4:26:f2:6d:97:fa:b3:7d:17:24:46:b3:eb:c1:
+	                    b1:09:e9:f1:e4:36:e4:4f:50:3e:52:8f:35:b3:3d:
+	                    85:97:0f:28:60:b6:1a:bc:77:81:ab:41:8b:f5:00:
+	                    e4:dc:1e:ed:82:a4:f6:8e:fa:22:28:07:04:06:81:
+	                    47:77:a3:a2:b0:74:b8:d9:9d:8b:cb:15:b5:4e:70:
+	                    66:a4:b9:11:9f:ee:9c:b4:46:56:fd:16:1f:e8:e7:
+	                    9d:d3:f9:64:53:62:c4:e1:e7
+	                Exponent: 65537 (0x10001)
+	        Attributes:
+	            challengePassword        :unable to print attribute
+	    Signature Algorithm: sha256WithRSAEncryption
+	         79:8d:f7:ff:13:9d:5a:85:2a:5a:f4:97:16:f6:54:00:8f:7f:
+	         08:ba:a6:d1:be:75:d2:a9:80:15:ab:cc:04:dd:0b:c3:e1:f7:
+	         71:34:45:36:59:45:26:42:27:a4:df:11:0f:ec:0c:e1:40:16:
+	         8a:59:8f:6f:fb:2d:94:30:55:bc:b4:39:8b:e4:d2:8a:2a:e4:
+	         25:39:25:50:22:a3:7a:ef:34:25:4c:a6:75:9b:de:4d:ea:2b:
+	         65:11:f5:fc:16:b7:7d:47:f9:d1:6b:9b:3d:18:5d:da:e3:df:
+	         c9:ff:07:6b:72:73:50:a7:69:f9:b9:7b:45:1c:9e:3a:02:95:
+	         35:23
 ```
-* Command to get the certificate information of a service account in kubernetes.
+* Setup configs to sign certificates
 ```
-$ kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
-	   jq -r '.data."ca.crt"' | \
-	   base64 -d | \
-	   openssl x509 -inform pem -noout -text
+$ cat ca.conf 
+	[ ca ]
+	default_ca = ca_default
+	[ ca_default ]
+	dir = ./ca
+	certs = $dir
+	new_certs_dir = $dir/ca.db.certs
+	database = $dir/ca.db.index
+	serial = $dir/ca.db.serial
+	RANDFILE = $dir/ca.db.rand
+	certificate = $dir/ca.crt
+	private_key = $dir/ca.key
+	default_days = 365
+	default_crl_days = 30
+	default_md = md5
+	preserve = no
+	policy = generic_policy
+	[ generic_policy ]
+	countryName = optional
+	stateOrProvinceName = optional
+	localityName = optional
+	organizationName = optional
+	organizationalUnitName = optional
+	commonName = optional
+	emailAddress = optional
 ```
-* Validating a certificate chain
+* Create the CSR and sign it
 ```
-$ openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 \
--print_certs -text -noout
+$ openssl ca -config ca.conf -out leaf/leaf-ca.crt -infiles leaf/leaf-ca.csr
+
+$ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
+	Certificate:
+	    Data:
+	        Version: 1 (0x0)
+	        Serial Number: 4660 (0x1234)
+	    Signature Algorithm: md5WithRSAEncryption
+	        Issuer: C=IN, ST=Karnataka, L=Bengalore, O=root-cert.net, OU=OU, CN=root-cert.et/emailAddress=nobody@root-cert.net
+	        Validity
+	            Not Before: Jul  7 17:11:37 2021 GMT
+	            Not After : Jul  7 17:11:37 2022 GMT
+	        Subject: C=IN, ST=KN, L=Bengalore, O=leaf-ca.net, OU=OU, CN=leaf-ca.net/emailAddress=nobody@leaf-ca.net
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
+	                Public-Key: (1024 bit)
+	                Modulus:
+	                    00:d7:69:e7:ea:78:91:bb:6a:39:f9:db:ec:61:fc:
+	                    46:2a:fa:1c:25:79:45:8d:1e:c2:50:c2:1a:40:92:
+	                    4b:c4:26:f2:6d:97:fa:b3:7d:17:24:46:b3:eb:c1:
+	                    b1:09:e9:f1:e4:36:e4:4f:50:3e:52:8f:35:b3:3d:
+	                    85:97:0f:28:60:b6:1a:bc:77:81:ab:41:8b:f5:00:
+	                    e4:dc:1e:ed:82:a4:f6:8e:fa:22:28:07:04:06:81:
+	                    47:77:a3:a2:b0:74:b8:d9:9d:8b:cb:15:b5:4e:70:
+	                    66:a4:b9:11:9f:ee:9c:b4:46:56:fd:16:1f:e8:e7:
+	                    9d:d3:f9:64:53:62:c4:e1:e7
+	                Exponent: 65537 (0x10001)
+	    Signature Algorithm: md5WithRSAEncryption
+	         3b:12:04:cc:27:b1:1e:8d:0a:a6:3d:af:2c:48:3d:21:6b:99:
+	         4e:36:bd:c4:89:c9:e7:dd:da:55:6e:7e:a9:cb:c0:d0:a8:61:
+	         5f:ee:e8:fc:78:fb:92:08:ea:25:3f:1b:fa:04:af:10:8a:8b:
+	         16:74:ea:6b:11:25:ca:78:97:07:c4:a5:d4:9f:59:0b:e2:11:
+	         f4:ea:30:14:22:1d:39:d7:e8:21:b1:38:1c:95:43:b1:36:1f:
+	         9a:5c:6e:0f:11:04:7d:fb:c8:ff:00:91:5f:71:8e:d8:2f:e3:
+	         dc:29:27:d2:ba:9e:38:c5:01:f9:8b:0b:04:2a:b6:8d:a2:0c:
+	         42:fe
 ```
 
 ### VMware certificates
