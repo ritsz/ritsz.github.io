@@ -56,17 +56,6 @@ docker build -t rritesh-node-img .
 ```
 * Downloads node baseimage from Docker-Hub and creates the template image, by Copying the `server.js`. Doesn't run the `CMD`. 
 * Tags the images as `rritesh-node-img`. The `image` command can be used to check the images. 
-```sh
-docker image ls
-REPOSITORY         TAG       IMAGE ID       CREATED         SIZE
-rritesh-node-img   latest    bc63aa5603f8   7 minutes ago   142MB
-hello-world        latest    bf756fb1ae65   13 months ago   13.3kB
-
-docker create --name my-app --init -p 3000:3000 rritesh-node-img 			
-	703e2532312a6ace890b97e2bdcd88c03f19435b5f952015c373831df72dd0ae
-```
-* `-p` does port mapping between localhost and docker container.
-* `--init` uses Tini package that handles `Ctrl-C`
 
 #### Playing around with docker
 ```sh
