@@ -51,13 +51,13 @@
 ```
 * Generating self signed certificates
 ```sh
-# Generate private key
+Generate private key
 > openssl genrsa -des3 -out server/server.key 1024
 
-# Generate self signed certificate.
+Generate self signed certificate.
 > openssl req -new -key server/server.key -x509 -days 365 -out server/server.crt
 
-# Checking the self signed certificate:
+Checking the self signed certificate:
 > openssl x509 -inform pem -noout -text -in server/server.crt
 	Certificate:
 	    Data:
@@ -74,10 +74,10 @@
 ```
 * Signing a CSR
 ```sh
-# Generate new key and new CSR
+Generate new key and new CSR
 > openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
 
-# Check the CSR
+Check the CSR
 > openssl req -text -noout -verify -in  leaf/leaf-ca.csr
 	verify OK
 	Certificate Request:
@@ -110,7 +110,7 @@
 	         c9:ff:07:6b:72:73:50:a7:69:f9:b9:7b:45:1c:9e:3a:02:95:
 	         35:23
 
-# Signing the leaf certificate
+Signing the leaf certificate
 > cat ca.conf 
 	[ ca ]
 	default_ca = ca_default
