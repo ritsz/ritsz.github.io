@@ -30,26 +30,26 @@
 
 ### curl and openssl commands.
 * Command to verify ssl connection:	
-```sh
+```
 $ openssl s_client -connect <ip>:<port>
 ```
 * Command to decode the pem-encoded certificate:
-```sh
+```
 $ openssl x509 -inform pem -noout -text -in <file>
 ```
 * Command to get the certificate information of a service account in kubernetes.
-```sh
+```
 $ kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
 	   jq -r '.data."ca.crt"' | \
 	   base64 -d | \
 	   openssl x509 -inform pem -noout -text
 ```
 * Validating a certificate chain
-```sh
+```
 $ openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 -print_certs -text -noout
 ```
 * Generating self signed certificates
-```sh
+```
 Generate private key
 $ openssl genrsa -des3 -out server/server.key 1024
 
@@ -72,7 +72,7 @@ $ openssl x509 -inform pem -noout -text -in server/server.crt
 	            Public Key Algorithm: rsaEncryption
 ```
 * Signing a CSR
-```sh
+```
 Generate new key and new CSR
 $ openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
 
@@ -108,8 +108,9 @@ $ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
 	         65:11:f5:fc:16:b7:7d:47:f9:d1:6b:9b:3d:18:5d:da:e3:df:
 	         c9:ff:07:6b:72:73:50:a7:69:f9:b9:7b:45:1c:9e:3a:02:95:
 	         35:23
-
-Signing the leaf certificate
+```
+* Setup configs to sign certificates
+```
 $ cat ca.conf 
 	[ ca ]
 	default_ca = ca_default
@@ -135,7 +136,9 @@ $ cat ca.conf
 	organizationalUnitName = optional
 	commonName = optional
 	emailAddress = optional
-
+```
+* Create the CSR and sign it
+```
 $ openssl ca -config ca.conf -out leaf/leaf-ca.crt -infiles leaf/leaf-ca.csr
 
 $ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
@@ -173,8 +176,8 @@ $ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
 	         dc:29:27:d2:ba:9e:38:c5:01:f9:8b:0b:04:2a:b6:8d:a2:0c:
 	         42:fe
 ```
-* Get the VMCA root certificate:
-```sh
+* Get the VMCA root certificate
+```
 root@wdc-10-191-178-31 [ ~ ]# dcli +show com vmware vcenter certificateauthority getroot getroot
 	-----BEGIN CERTIFICATE-----
 	MIIERzCCAy+gAwIBAgIJANtU/Cay6sPNMA0GCSqGSIb3DQEBCwUAMIGuMQswCQYD
@@ -212,13 +215,14 @@ $ dcli +show com vmware vcenter certificateauthority getroot getroot | openssl x
 	   Subject Public Key Info:
 ```
 * Signing a CSR on VC using VC root certificate
-```sh
+```
 $ /usr/lib/vmware-vmca/bin/certool --gencertfromcsr --csrfile new.csr --cert new.crt
 ```
 * Replacing root certificate:
-```sh
+```
 $ /usr/lib/vmware-vmca/bin/certificate-manager
 ```
+
 ### TLS
 * TLS gives us:
 	* integrity
