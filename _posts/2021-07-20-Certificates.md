@@ -49,14 +49,37 @@
 * Client sends *CypherChangeSpec* (we are moving to symmetric encryption now.)
 * Server confirms *CypherChangeSpec*.
 
+<!--
 #### Generating certificates
+* Generating self signed certificates
+```sh
+openssl genrsa -des3 -out server/server.key 1024 # Generate private key
+
+Generate self signed certificate.
+openssl req -new -key server/server.key -x509 -days 365 -out server/server.crt
+
+Checking the self signed certificate:
+openssl x509 -inform pem -noout -text -in server/server.crt
+	Certificate:
+	    Data:
+	        Version: 1 (0x0)
+	        Serial Number: 15988035885256798120 (0xdde0e9edecedefa8)
+	    Signature Algorithm: sha256WithRSAEncryption
+	        Issuer: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Validity
+	            Not Before: Jul 20 14:33:27 2021 GMT
+	            Not After : Jul 20 14:33:27 2022 GMT
+	        Subject: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
+```
 * Signing a CSR
 ```
 Generate new key and new CSR
-openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
+$ openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
 
 Check the CSR
-openssl req -text -noout -verify -in  leaf/leaf-ca.csr
+$ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
 	verify OK
 	Certificate Request:
 	    Data:
@@ -90,7 +113,7 @@ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
 ```
 * Setup configs to sign certificates
 ```
-cat ca.conf 
+$ cat ca.conf 
 	[ ca ]
 	default_ca = ca_default
 	[ ca_default ]
@@ -118,9 +141,9 @@ cat ca.conf
 ```
 * Create the CSR and sign it
 ```
-openssl ca -config ca.conf -out leaf/leaf-ca.crt -infiles leaf/leaf-ca.csr
+$ openssl ca -config ca.conf -out leaf/leaf-ca.crt -infiles leaf/leaf-ca.csr
 
-openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
+$ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
 	Certificate:
 	    Data:
 	        Version: 1 (0x0)
@@ -156,6 +179,54 @@ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
 	         42:fe
 ```
 
+### VMware certificates
+* Get the VMCA root certificate
+```
+root@wdc-10-191-178-31 [ ~ ]# dcli +show com vmware vcenter certificateauthority getroot getroot
+	-----BEGIN CERTIFICATE-----
+	MIIERzCCAy+gAwIBAgIJANtU/Cay6sPNMA0GCSqGSIb3DQEBCwUAMIGuMQswCQYD
+	VQQDDAJDQTEXMBUGCgmSJomT8ixkARkWB3ZzcGhlcmUxFTATBgoJkiaJk/IsZAEZ
+	FgVsb2NhbDELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExMDAuBgNV
+	BAoMJ3dkYy0xMC0xOTEtMTc4LTMxLm5pbWJ1cy5lbmcudm13YXJlLmNvbTEbMBkG
+	A1UECwwSVk13YXJlIEVuZ2luZWVyaW5nMB4XDTIxMDQyNTEyMDEzN1oXDTMxMDQy
+	MzEyMDEzN1owga4xCzAJBgNVBAMMAkNBMRcwFQYKCZImiZPyLGQBGRYHdnNwaGVy
+	ZTEVMBMGCgmSJomT8ixkARkWBWxvY2FsMQswCQYDVQQGEwJVUzETMBEGA1UECAwK
+	Q2FsaWZvcm5pYTEwMC4GA1UECgwnd2RjLTEwLTE5MS0xNzgtMzEubmltYnVzLmVu
+	Zy52bXdhcmUuY29tMRswGQYDVQQLDBJWTXdhcmUgRW5naW5lZXJpbmcwggEiMA0G
+	CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvDhZhn5IcQ96u1DOY9JvCdI5OINBt
+	pVubMHjiNr3ZEVshwDyQ08lph46aEq+oeQCVC4YtCxcnYD6biwtGXqy/nwhsowpP
+	qoUBtfz+I07Rfds1Bx3yMQzQyBN/Z3+YICobGvt1zi62T+v1dR3ybxcsmTSrjcph
+	tNPtl7RKEpyWkuoc0ynYx3SQSTnCEZn9mzlF9hTjwZFKRtxjNu4Irw4400ddD62T
+	P5HUXgbWeyy3b8rQM9VUPsrHiUYmmZmUpkogu5+3m5KVQ7R9zFiKTdkKK90RG6EA
+	Rbmqli08r58GUXi4R9VwWAAjNRGN562HWw/uYyfOrDa0uWYik4Rj9csBAgMBAAGj
+	ZjBkMB0GA1UdDgQWBBSglHnWeUTJtbegFxF/5zJ8ZlYpaDAfBgNVHREEGDAWgQ5l
+	bWFpbEBhY21lLmNvbYcEfwAAATAOBgNVHQ8BAf8EBAMCAQYwEgYDVR0TAQH/BAgw
+	BgEB/wIBADANBgkqhkiG9w0BAQsFAAOCAQEASRSjW5Sa6NkdVrEmfEe6kNNakeuU
+	0t0THE04fl3AUJMaTFlkDywFsFLVWZlL9WdWPxgVWRTokmfy8NzxFo4Dy7PolCr3
+	eQfJ9pwxWZs66PPnbfnu/wO4FyGZ1ABqBM9kenOsjIF8ErhGgfjWqOCIdn6Jdv99
+	qsR52Ctw7A6Exyno43k/0pPQJR8ghZcCvk71OIiic4gOjNIZZ/LfqyO+xilpz2UM
+	oAdEe+KaEAkvQT1/VD9LzVw4UIenEQ5o075OQo3ZOwd1c+GtZsSqh09MJlyLpuNq
+	XUGgGs+cR1zmKLcGvpOb5FcjXpfUOjykmlt2+SG/cTc3UZdnE2Cv+esgcg==
+	-----END CERTIFICATE-----
+	
+$ dcli +show com vmware vcenter certificateauthority getroot getroot | openssl x509 -noout -text
+	Signature Algorithm: sha256WithRSAEncryption                                                                                         
+	   Issuer: CN=CA, DC=vsphere, DC=local, C=US, ST=California, O=wdc-10-191-178-31.nimbus.eng.vmware.com, OU=VMware Engineering
+	   Validity
+	       Not Before: Apr 25 12:01:37 2021 GMT
+	       Not After : Apr 23 12:01:37 2031 GMT
+	   Subject: CN=CA, DC=vsphere, DC=local, C=US, ST=California, O=wdc-10-191-178-31.nimbus.eng.vmware.com, OU=VMware Engineering
+	   Subject Public Key Info:
+```
+* Signing a CSR on VC using VC root certificate
+```
+$ /usr/lib/vmware-vmca/bin/certool --gencertfromcsr --csrfile new.csr --cert new.crt
+```
+* Replacing root certificate:
+```
+$ /usr/lib/vmware-vmca/bin/certificate-manager
+```
+-->
 #### curl and openssl commands.
 * Command to verify ssl connection:	
 ```sh
