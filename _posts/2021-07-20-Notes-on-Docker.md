@@ -55,7 +55,7 @@ server.js
 docker build -t rritesh-node-img .
 ```
 * Downloads node baseimage from Docker-Hub and creates the template image, by Copying the `server.js`. Doesn't run the `CMD`. 
-* Tags the images as `rritesh-node-img`
+* Tags the images as `rritesh-node-img`. The `image` command can be used to check the images. 
 ```sh
 docker image ls
 REPOSITORY         TAG       IMAGE ID       CREATED         SIZE
