@@ -32,10 +32,9 @@ modified: '2021-05-08T16:25:24.145Z'
 * Sample dockerfile
 
 ```dockerfile
-Dockerfile
-	FROM node:12-slim
-	COPY server.js server.js
-	CMD ["node", "server.js"]
+FROM node:12-slim
+COPY server.js server.js
+CMD ["node", "server.js"]
 ```
 * Each step  `FROM`, `COPY`, `CMD` creates an image that is consumed by the subsequent step. A `NodeJS` Image is created, a temporary container is created where a file is copied. This new container is used to generate a snapshot (image-2). This image-2 is then used to create a final image which has the Startup command set as `CMD`.
 * Javascript code
