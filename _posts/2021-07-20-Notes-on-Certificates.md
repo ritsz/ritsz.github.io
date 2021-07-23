@@ -49,7 +49,6 @@
 * Client sends *CypherChangeSpec* (we are moving to symmetric encryption now.)
 * Server confirms *CypherChangeSpec*.
 
-<!--
 #### Generating certificates
 * Generating self signed certificates
 ```sh
@@ -226,7 +225,7 @@ $ /usr/lib/vmware-vmca/bin/certool --gencertfromcsr --csrfile new.csr --cert new
 ```
 $ /usr/lib/vmware-vmca/bin/certificate-manager
 ```
--->
+
 #### curl and openssl commands.
 * Command to verify ssl connection:	
 ```sh
