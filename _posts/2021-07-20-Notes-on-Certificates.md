@@ -51,9 +51,11 @@
 
 #### Generating certificates
 * Generating self signed certificates
-```sh
 
 ```
+
+```
+
 * Signing a CSR
 ```
 ```
