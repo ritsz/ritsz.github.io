@@ -114,19 +114,19 @@ default via 10.78.191.254 dev eth0 proto dhcp metric 100
 ### Install kubernetes
 
 ```
-  > cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-  [kubernetes]
-  name=Kubernetes
-  baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-  enabled=1
-  gpgcheck=1
-  repo_gpgcheck=1
-  gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-  EOF
-  
-  > dnf install kubeadm -y 
-  > systemctl enable kubelet
-  > systemctl start kubelet
+> cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+> dnf install kubeadm -y 
+> systemctl enable kubelet
+> systemctl start kubelet
 ```
 * Start kubeadm:
 
@@ -210,7 +210,7 @@ default via 10.78.191.254 dev eth0 proto dhcp metric 100
 ```
 * Flannel configurations reflects the above observation. `FLANNEL_NETWORK` is the CIDR for the whole flannel overlay network and `FLANNEL_SUBNET` is the subnet CIDR for the node.
 
-``` 
+```sh
 > cat /run/flannel/subnet.env
   	FLANNEL_NETWORK=10.244.0.0/16
   	FLANNEL_SUBNET=10.244.0.1/24
