@@ -1,5 +1,5 @@
 ---
-title: Notes-on-HAProxy
+title: Notes on HAProxy
 created: '2021-04-29T06:35:11.733Z'
 modified: '2021-05-07T07:09:38.048Z'
 ---
