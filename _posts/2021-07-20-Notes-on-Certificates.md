@@ -53,11 +53,65 @@
 * Generating self signed certificates
 
 ```
+openssl genrsa -des3 -out server/server.key 1024 # Generate private key
 
+Generate self signed certificate.
+openssl req -new -key server/server.key -x509 -days 365 -out server/server.crt
+
+Checking the self signed certificate:
+openssl x509 -inform pem -noout -text -in server/server.crt
+	Certificate:
+	    Data:
+	        Version: 1 (0x0)
+	        Serial Number: 15988035885256798120 (0xdde0e9edecedefa8)
+	    Signature Algorithm: sha256WithRSAEncryption
+	        Issuer: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Validity
+	            Not Before: Jul 20 14:33:27 2021 GMT
+	            Not After : Jul 20 14:33:27 2022 GMT
+	        Subject: C=In, ST=Karnataka, L=Bengaluru, O=VMware, OU=Wcp, CN=aditi/emailAddress=house@pres
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
 ```
 
 * Signing a CSR
 ```
+Generate new key and new CSR
+$ openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
+
+Check the CSR
+$ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
+	verify OK
+	Certificate Request:
+	    Data:
+	        Version: 0 (0x0)
+	        Subject: C=IN, ST=KN, L=Bengalore, O=leaf-ca.net, OU=OU, CN=leaf-ca.net/emailAddress=nobody@leaf-ca.net
+	        Subject Public Key Info:
+	            Public Key Algorithm: rsaEncryption
+	                Public-Key: (1024 bit)
+	                Modulus:
+	                    00:d7:69:e7:ea:78:91:bb:6a:39:f9:db:ec:61:fc:
+	                    46:2a:fa:1c:25:79:45:8d:1e:c2:50:c2:1a:40:92:
+	                    4b:c4:26:f2:6d:97:fa:b3:7d:17:24:46:b3:eb:c1:
+	                    b1:09:e9:f1:e4:36:e4:4f:50:3e:52:8f:35:b3:3d:
+	                    85:97:0f:28:60:b6:1a:bc:77:81:ab:41:8b:f5:00:
+	                    e4:dc:1e:ed:82:a4:f6:8e:fa:22:28:07:04:06:81:
+	                    47:77:a3:a2:b0:74:b8:d9:9d:8b:cb:15:b5:4e:70:
+	                    66:a4:b9:11:9f:ee:9c:b4:46:56:fd:16:1f:e8:e7:
+	                    9d:d3:f9:64:53:62:c4:e1:e7
+	                Exponent: 65537 (0x10001)
+	        Attributes:
+	            challengePassword        :unable to print attribute
+	    Signature Algorithm: sha256WithRSAEncryption
+	         79:8d:f7:ff:13:9d:5a:85:2a:5a:f4:97:16:f6:54:00:8f:7f:
+	         08:ba:a6:d1:be:75:d2:a9:80:15:ab:cc:04:dd:0b:c3:e1:f7:
+	         71:34:45:36:59:45:26:42:27:a4:df:11:0f:ec:0c:e1:40:16:
+	         8a:59:8f:6f:fb:2d:94:30:55:bc:b4:39:8b:e4:d2:8a:2a:e4:
+	         25:39:25:50:22:a3:7a:ef:34:25:4c:a6:75:9b:de:4d:ea:2b:
+	         65:11:f5:fc:16:b7:7d:47:f9:d1:6b:9b:3d:18:5d:da:e3:df:
+	         c9:ff:07:6b:72:73:50:a7:69:f9:b9:7b:45:1c:9e:3a:02:95:
+	         35:23
+
 ```
 
 * Setup configs to sign certificates
