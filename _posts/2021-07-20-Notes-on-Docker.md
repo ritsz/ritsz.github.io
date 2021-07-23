@@ -31,7 +31,7 @@ modified: '2021-05-08T16:25:24.145Z'
 #### Building an image
 * Sample dockerfile
 
-```
+```dockerfile
 Dockerfile
 	FROM node:12-slim
 	COPY server.js server.js
@@ -55,18 +55,18 @@ server.js
 * Building the image
 
 ```sh
-docker build -t rritesh-node-img .
+[rritesh-a02:rritesh:~] docker build -t rritesh-node-img .
 ```
 * Downloads node baseimage from Docker-Hub and creates the template image, by Copying the `server.js`. Doesn't run the `CMD`. 
 * Tags the images as `rritesh-node-img`. 
 
 ```sh
-docker image ls
+[rritesh-a02:rritesh:~] docker image ls
 REPOSITORY         TAG       IMAGE ID       CREATED         SIZE
 rritesh-node-img   latest    bc63aa5603f8   7 minutes ago   142MB
 hello-world        latest    bf756fb1ae65   13 months ago   13.3kB
 
-docker create --name my-app --init -p 3000:3000 rritesh-node-img 			
+[rritesh-a02:rritesh:~] docker create --name my-app --init -p 3000:3000 rritesh-node-img 			
 	703e2532312a6ace890b97e2bdcd88c03f19435b5f952015c373831df72dd0ae
 ```
 * `-p` does port mapping between localhost and docker container.
@@ -75,18 +75,18 @@ docker create --name my-app --init -p 3000:3000 rritesh-node-img
 #### Playing around with docker
 
 ```sh
-docker ps -a
+[rritesh-a02:rritesh:~] docker ps -a
 CONTAINER ID   IMAGE              COMMAND                  CREATED          STATUS                      PORTS     NAMES
 703e2532312a   rritesh-node-img   "docker-entrypoint.s…"   24 seconds ago   Created                               my-app
 
-docker start my-app
+[rritesh-a02:rritesh:~] docker start my-app
 my-app
 
-docker ps -a
+[rritesh-a02:rritesh:~] docker ps -a
 CONTAINER ID   IMAGE              COMMAND                  CREATED             STATUS                         PORTS                    NAMES
 703e2532312a   rritesh-node-img   "docker-entrypoint.s…"   2 minutes ago       Up 5 seconds                   0.0.0.0:3000->3000/tcp  my-app
 
-docker attach my-app			# Attaches to the docker container and prints the logs; Ctrl-C to exit, which also stops the app
+[rritesh-a02:rritesh:~] docker attach my-app			# Attaches to the docker container and prints the logs; Ctrl-C to exit, which also stops the app
 ping!
 ping!
 ping!
@@ -95,7 +95,7 @@ ping!
 * If you run `attach`, your terminal is going to get stuck displaying the container logs. Worse, if you `attach` and then `ctrl-C` to get out, it will actually stop the container on exit. Or worse, it will just ignore the ctrl-C and trap your terminal. If that ever happens to you, you’ll have to open a new terminal and stop the container. That’s why in your applications you should handle the `SIGTERM` or use the Tini package like we have in our example. A better way to see output is the Docker logs command:
 
 ```sh
-docker logs -f my-app
+[rritesh-a02:rritesh:~] docker logs -f my-app
 server started
 ping!
 ping!
@@ -104,17 +104,17 @@ ping!
 * Run a bash shell on the container, notice that the server.js file is copied on the root mount point
 
 ```sh
-docker exec -it my-app bash
+[rritesh-a02:rritesh:~] docker exec -it my-app bash
 root@703e2532312a:/# ls 			# <= root@<docker ID>
 bin  boot  dev	etc  home  lib	lib64  media  mnt  opt	proc  root  run  sbin  server.js  srv  sys  tmp  usr  var
 ```
 * Stop the container: Sends a `SIGTERM` to the primary process in the container
 
 ```
-$docker stop my-app
+[rritesh-a02:rritesh:~] docker stop my-app
 my-app
 
-docker ps -a
+[rritesh-a02:rritesh:~] docker ps -a
 CONTAINER ID   IMAGE              COMMAND                  CREATED             STATUS                         PORTS     NAMES
 703e2532312a   rritesh-node-img   "docker-entrypoint.s…"   13 minutes ago      Exited (143) 3 seconds ago               my-app
 ```
@@ -122,19 +122,19 @@ CONTAINER ID   IMAGE              COMMAND                  CREATED             S
 * Remove container
 
 ```sh	
-docker rm my-app
+[rritesh-a02:rritesh:~] docker rm my-app
 	my-app
 	
-docker ps -a
+[rritesh-a02:rritesh:~] docker ps -a
 	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 * `run` is a shortcut that takes care of create, start, and attach all at once. `--rm` flag removes the container when we stop it (stop+rm).
 
 ```sh
-docker run -d --name my-app -p 3000:3000 --init --rm rritesh-node-img
+[rritesh-a02:rritesh:~] docker run -d --name my-app -p 3000:3000 --init --rm rritesh-node-img
 	700e9387cbca4e7d95f456136bd0046566471bc2130d48cdfe34241ea7ded05c
 	
-docker ps -a
+[rritesh-a02:rritesh:~] docker ps -a
 	CONTAINER ID   IMAGE              COMMAND                  CREATED         STATUS         PORTS                    NAMES
 	700e9387cbca   rritesh-node-img   "docker-entrypoint.s…"   4 seconds ago   Up 3 seconds   0.0.0.0:3000->3000/tcp   my-app
 ```
@@ -161,22 +161,22 @@ docker ps -a
 * Instead a local volume of the HOST can be mapped to the container such that the `index.html` is taken from there:
 
 ```sh
-docker run -d --name nginx-app -p 8000:80 -v /tmp/nginx/html:/usr/share/nginx/html:ro --init --rm nginx
+[rritesh-a02:rritesh:~] docker run -d --name nginx-app -p 8000:80 -v /tmp/nginx/html:/usr/share/nginx/html:ro --init --rm nginx
 ```
 
 #### Multi step build
 * Outputs from one image build can be taken as the input to another image build
 
-```
-		FROM node:alpine as builder
-		WORKDIR '/app'
-		COPY package.json .
-		RUN npm install
-		COPY . .
-		RUN npm run build
-		 
-		FROM nginx
-		COPY --from=builder /app/build /usr/share/nginx/html
+```dockerfile
+FROM node:alpine as builder
+WORKDIR '/app'
+COPY package.json .
+RUN npm install
+COPY . .
+RUN npm run build
+ 
+FROM nginx
+COPY --from=builder /app/build /usr/share/nginx/html
 ```
 * The output of node app build `/app/build` is taken and copied over to nginx image. This final image will have an nginx server serving `node.js` web service.
 
