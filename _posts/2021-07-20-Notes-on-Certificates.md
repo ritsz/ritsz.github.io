@@ -50,7 +50,7 @@
 * Server confirms *CypherChangeSpec*.
 
 #### Generating certificates
-* Generating self signed certificates
+##### Generating self signed certificates
 
 ```sh
 openssl genrsa -des3 -out server/server.key 1024 # Generate private key
@@ -74,17 +74,15 @@ openssl x509 -inform pem -noout -text -in server/server.crt
 	            Public Key Algorithm: rsaEncryption
 ```
 
-* Signing a CSR
+##### Signing a CSR
 
 ```sh
 
 # Generate new key and new CSR
-
 $ openssl req -new -newkey rsa:1024 -nodes -keyout leaf/leaf-ca.key -out leaf-ca.csr
 
 
 # Check the CSR
-
 $ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
 	verify OK
 	Certificate Request:
@@ -119,7 +117,7 @@ $ openssl req -text -noout -verify -in  leaf/leaf-ca.csr
 
 ```
 
-* Setup configs to sign certificates
+##### Setup configs to sign certificates
 
 ```sh
 $ cat ca.conf
@@ -149,7 +147,7 @@ $ cat ca.conf
 	emailAddress = optional
 ```
 
-* Create the CSR and sign it
+##### Create the CSR and sign it
 
 ```sh
 $ openssl ca -config ca.conf -out leaf/leaf-ca.crt -infiles leaf/leaf-ca.csr
@@ -191,7 +189,7 @@ $ openssl x509 -inform pem -noout -text -in leaf/leaf-ca.crt
 ```
 
 ### VMware certificates
-* Get the VMCA root certificate
+##### Get the VMCA root certificate
 
 ```sh
 root@wdc-10-191-178-31 [ ~ ]# dcli +show com vmware vcenter certificateauthority getroot getroot
@@ -231,32 +229,32 @@ $ dcli +show com vmware vcenter certificateauthority getroot getroot | openssl x
 	   Subject Public Key Info:
 ```
 
-* Signing a CSR on VC using VC root certificate
+##### Signing a CSR on VC using VC root certificate
 
 ```sh
 $ /usr/lib/vmware-vmca/bin/certool --gencertfromcsr --csrfile new.csr --cert new.crt
 ```
 
-* Replacing root certificate:
+##### Replacing root certificate:
 
 ```sh
 $ /usr/lib/vmware-vmca/bin/certificate-manager
 ```
 
 #### curl and openssl commands.
-* Command to verify ssl connection:
+##### Command to verify ssl connection:
 
 ```sh
 openssl s_client -connect <ip>:<port>
 ```
 
-* Command to decode the pem-encoded certificate:
+##### Command to decode the pem-encoded certificate:
 
 ```sh
 openssl x509 -inform pem -noout -text -in <file>
 ```
 
-* Command to get the certificate information of a service account in kubernetes.
+##### Command to get the certificate information of a service account in kubernetes.
 
 ```sh
 kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
@@ -265,8 +263,7 @@ kubectl get secrets default-token-brbz6 -n vmware-system-nsop -o json | \
 	   openssl x509 -inform pem -noout -text
 ```
 
-* Validating a certificate chain
-
+##### Validating a certificate chain
 ```sh
 openssl crl2pkcs7 -nocrl -certfile /tmp/chain.crt | openssl pkcs7 \
 -print_certs -text -noout
