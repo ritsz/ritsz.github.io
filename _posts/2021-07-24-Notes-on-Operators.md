@@ -4,17 +4,6 @@ created: '2021-05-06T16:15:45.411Z'
 modified: '2021-05-08T20:43:45.977Z'
 ---
 
-#### Table of contents
-
-    * [Reference](#reference)
-    * [Introduction](#introduction)
-    * [Controllers](#controllers)
-    * [Creating controllers using kubebuilder](#creating-controllers-using-kubebuilder)
-    * [Kube-rbac-proxy](#kube-rbac-proxy)
-    * [Webhooks](#webhooks)
-    * [Kustomization](#kustomization)
-    * [TODO](#todo)
-
 ### Reference
 * Let's build a Kubernetes Operator in Go : [vmware{Code}@YouTube](https://www.youtube.com/watch?v=8Ex7ybi273g)
 * Build a simple vm operator using kubebuilder: [codeconnect-vm-operator](https://github.com/embano1/codeconnect-vm-operator/blob/main/README.md)
