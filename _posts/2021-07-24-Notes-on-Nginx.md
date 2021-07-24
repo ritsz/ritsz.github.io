@@ -1,10 +1,8 @@
 ---
-title: Nginx
+title: Notes on Nginx
 created: '2021-01-30T08:56:47.820Z'
 modified: '2021-05-08T20:57:46.458Z'
 ---
-
-Nginx
 
 #### NGINX is a web server
 * A web server is a piece of software that responds to HTTP requests made by clients (usually web browsers). 
