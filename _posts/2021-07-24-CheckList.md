@@ -1,16 +1,27 @@
-* POJO: From Yaml, Json.
-	* JsonProperty.
-	* ObjectMapper.
-	* OpenAPI3 + Swagger to Java class.
-	* Swagger API to class generation.
+* ~~POJO: From Yaml, Json~~.
+	* ~~JsonProperty~~.
+	* ~~ObjectMapper~~.
+	* ~~OpenAPI3 + Swagger to Java class~~.
+	* ~~Swagger API to class generation~~.
 * Springboot course.
-	* Beans.
+	* ~~Beans~~.
+	* ~~SpringWeb and SpringMVC~~.
+	* Views (of MVC) in Spring MVC.
+	* Dispatcher Servelet.
+	* Application Context.
 	* Reflections.
-	* SpringWeb and SpringMVC.
-	* Spring Data and JDBC.
+	* Spring Data.
+		- DAO
+		- JDBC
+		- JPA
+		- ORM
+		- Hibernate
+		- @Repository
 	* Spring cloud webclient.
 	* Spring security.
 	* Locking across microservices.
+		- Apache Reentrant locking.
+		- pessimistic locking.
 	* Futures.
 	* Java testcases.
 	  * Mocking POST/GET.
